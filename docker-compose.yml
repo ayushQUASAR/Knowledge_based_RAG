@@ -1,0 +1,47 @@
+# # version: '3.8'
+
+# services:
+#   # This is your FastAPI Backend
+#   backend:
+#     build: ./backend
+#     env_file:
+#       - ./.env  # Passes your API keys from the .env file to the container
+#     ports:
+#       - "8000:8000" # Maps your computer's port 8000 to the container's port 8000
+#     volumes:
+#       - ./backend:/code # (Optional) Mounts code for live-reloading
+    
+#   # This is your Streamlit Frontend
+#   frontend:
+#     build: ./frontend
+#     ports:
+#       - "8501:8501" # Maps your computer's port 8501 to the container's port 8501
+#     environment:
+#       # This is the key: it tells the frontend how to find the backend
+#       # "http://backend:8000" works because Docker Compose creates a network
+#       # where 'backend' is the hostname for your backend service.
+#       - BACKEND_API_URL=http://backend:8000
+#     depends_on:
+#       - backend # Tells Docker to start the backend before the frontend
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile   # ensure this matches your backend Dockerfile name
+    env_file:
+      - ./.env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/code
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile   # ensure this matches your frontend Dockerfile name
+    ports:
+      - "8501:8501"
+    environment:
+      - BACKEND_API_URL=http://backend:8000
+    depends_on:
+      - backend
